@@ -10,7 +10,7 @@ env.bak/
 venv.bak/
 
 
-test.py
+train.py
 
 __pycache__/
 *.py[cod]

@@ -1,18 +1,16 @@
 from fastapi import APIRouter, Request, Form
 from fastapi.responses import HTMLResponse
-
 from fastapi.templating import Jinja2Templates
-import numpy as np
 
-from src.neural_network import SimpleNeuralNetwork
+import numpy as np
+import tensorflow as tf
 
 router = APIRouter()
 
 
-
 templates = Jinja2Templates(directory="templates")
 
-network = SimpleNeuralNetwork.load("src/models/neural_network.pkl")
+network = tf.keras.models.load_model('src/models/display_classifier.keras')
 
 @router.get("/", response_class=HTMLResponse)
 async def show_form(request: Request):
@@ -28,8 +26,8 @@ async def classify_display(
     try:
         inputs = np.array([[length, width, quality]])
 
-        output = network.feedforward(inputs[0])
-        predicted_class = np.argmax(output)
+        prediction = network.predict(inputs, verbose=0)
+        predicted_class = np.argmax(prediction[0])
 
         display_classes = {
             0: "Маленький, среднего или низкого качества",
