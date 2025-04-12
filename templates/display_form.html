@@ -3,42 +3,17 @@
 {% block content %}
 
                 <div class="row g-3 mt-5 mb-5 justify-content-center">
-                    <h2 class="my-heading text-center mb-3">Введите длину, ширину, качество дисплея <br> и выберите его тип</h2>
+                    <h2 class="my-heading text-center mb-3">Загрузите изображение одежды</h2>
                     <div class="col-md-5">
                         <div class="card shadow-sm p-4">
-                            <form action="/predict" method="post">
-                                <div class="mb-3">
-                                    <label class="form-label" for="length">Длина (см):</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="fa-solid fa-ruler-vertical"></i></span>
-                                        <input type="number" class="form-control" id="length" name="length" step="0.1" required>
-                                    </div>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label" for="width">Ширина (см):</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="fa-solid fa-ruler-horizontal"></i></span>
-                                        <input type="number" class="form-control" id="width" name="width" step="0.1" required>
-                                    </div>
-                                </div>
+                            <form action="/predict" method="post" enctype="multipart/form-data">
                                 <div class="mb-4">
-                                    <label class="form-label" for="quality">Предварительное качество (от 0 до 10):</label>
-                                    <div class="input-group">
-                                        <span class="input-group-text"><i class="fa-solid fa-star"></i></span>
-                                        <input type="number" class="form-control" id="quality" name="quality" required>
-                                    </div>
+                                    <label class="form-label" for="file">Изображение одежды:</label>
+                                    <input type="file" class="form-control" id="file" name="file" accept="image/*" required>
+                                    <div class="form-text">Загрузите изображение одежды для распознавания</div>
                                 </div>
-                                <div class="mb-4">
-                                    <label class="form-label" for="display_type">Тип дисплея:</label>
-                                    <select class="form-select" id="display_type" name="display_type" required>
-                                        <option value="IPS">IPS</option>
-                                        <option value="AMOLED">AMOLED</option>
-                                        <option value="OLED">OLED</option>
-                                        <option value="TN">TN</option>
-                                    </select>
-                                </div>
-                                <button id="btnNode" class="btn btn-outline-success w-100 mt-3">
-                                    <i class="fas fa-check-circle me-2"></i>Классифицировать дисплей
+                                <button type="submit" class="btn btn-outline-success w-100 mt-3">
+                                    <i class="fas fa-check-circle me-2"></i>Распознать одежду
                                 </button>
                             </form>
                         </div>
