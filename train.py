@@ -1,35 +1,27 @@
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+
+import pickle
 import pandas as pd
-import tensorflow as tf
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.compose import ColumnTransformer #
-import joblib
 
-data = pd.read_excel("/content/data.xlsx")
+instrument_df=pd.read_csv("src/models/ins_data.csv")
+instrument_df.head(5)
+X=instrument_df.drop(["instrument"],axis=1)
+Y=instrument_df["instrument"]
 
-X = data.drop(["Defect_level", "Quality_score"], axis=1)
-y = data[["Defect_level", "Quality_score"]]
+X_train1, X_test1, Y_train1, Y_test1=train_test_split(X, Y, test_size=0.3, random_state=42)
+model = KNeighborsClassifier(n_neighbors=3)
+model.fit(X_train1, Y_train1)
 
-numeric_cols = ["Length", "Width", "Quality", "Size_metric"]
-categorical_cols = ["Type"]
+y_pred = model.predict(X_test1)
+print(y_pred)
 
-preprocessor = ColumnTransformer(
-    transformers=[
-        ('num', StandardScaler(), numeric_cols),
-        ('cat', OneHotEncoder(handle_unknown='ignore'), categorical_cols)
-    ])
+df = pd.DataFrame({'y_pred': y_pred,
+                   'Y_test1': Y_test1})
+print(df)
 
-X_processed = preprocessor.fit_transform(X)
+print(f'accuracy: {accuracy_score(Y_test1, y_pred) :.3}')
 
-joblib.dump(preprocessor, "/content/preprocessor.pkl")
-
-model = tf.keras.Sequential([
-    tf.keras.layers.Dense(64, activation='relu', input_shape=(X_processed.shape[1],)),
-    tf.keras.layers.Dense(32, activation='relu'),
-    tf.keras.layers.Dense(2)
-])
-
-model.compile(optimizer='adam', loss='mse')
-
-model.fit(X_processed, y, epochs=50, batch_size=8, validation_split=0.2) # батч
-
-model.save("/content/display_predictor.keras")
+with open('instrument_pickle_file.pkl','wb') as pkl:
+    pickle.dump(model, pkl)

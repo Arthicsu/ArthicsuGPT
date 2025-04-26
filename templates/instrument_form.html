@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+            <div class="row g-3 mt-5 mb-5 justify-content-center">
+                <h2 class="my-heading text-center mb-3">Определение инструмента по звуку</h2>
+                <div class="col-md-5">
+                    <div class="card shadow-sm p-4">
+                        <form action="/predict" method="post">
+                            <div class="mb-3">
+                                <label class="form-label" for="height">Высота звука (0-100):</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-wave-square"></i></span>
+                                    <input type="number" class="form-control" id="height" name="height"
+                                           min="0" max="100" required>
+                                </div>
+                                <small class="text-muted">0 - низкий, 100 - высокий</small>
+                            </div>
+                            <div class="mb-4">
+                                <label class="form-label" for="loudness">Громкость (0-100):</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fa-solid fa-volume-high"></i></span>
+                                    <input type="number" class="form-control" id="loudness" name="loudness"
+                                           min="0" max="100" required>
+                                </div>
+                                <small class="text-muted">0 - тихий, 100 - громкий</small>
+                            </div>
+                            <button class="btn btn-outline-success w-100 mt-3">
+                                <i class="fas fa-music me-2"></i>Определить инструмент
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+{% endblock %}
