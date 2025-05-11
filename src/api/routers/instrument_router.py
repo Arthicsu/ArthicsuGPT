@@ -25,9 +25,9 @@ async def predict_display(
         new_data = pd.DataFrame([[height, loudness]], columns=["height", "loudness"])
         prediction = model.predict(new_data)[0]
         input_dict = {
-            "drum": "Барабан",
-            "flute": "Флейта",
-            "guitar": "Гитара",
+            0: "Барабан",
+            1: "Флейта",
+            2: "Гитара",
         }
 
         return templates.TemplateResponse(
