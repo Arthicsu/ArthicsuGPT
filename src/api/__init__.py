@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from .routers import instrument_router
+from .routers import clothes_router
 
 router = APIRouter()
 
-router.include_router(instrument_router.router)
+router.include_router(clothes_router.router)

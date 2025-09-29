@@ -1,27 +1,51 @@
-from sklearn.model_selection import train_test_split
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score
+from tensorflow.keras.datasets import mnist
+from tensorflow.keras.utils import to_categorical
+import numpy as np
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense, Flatten, Conv2D, MaxPooling2D
+import os
 
-import pickle
-import pandas as pd
 
-instrument_df=pd.read_csv("src/models/ins_data.csv")
-instrument_df.head(5)
-X=instrument_df.drop(["instrument"],axis=1)
-Y=instrument_df["instrument"]
+def train_and_save_model():
+    (x_train, y_train), (x_test, y_test) = mnist.load_data()
 
-X_train1, X_test1, Y_train1, Y_test1=train_test_split(X, Y, test_size=0.3, random_state=42)
-model = KNeighborsClassifier(n_neighbors=3)
-model.fit(X_train1, Y_train1)
+    x_train = x_train.astype('float32') / 255
+    x_test = x_test.astype('float32') / 255
 
-y_pred = model.predict(X_test1)
-print(y_pred)
+    y_train_cat = to_categorical(y_train, 10)
+    y_test_cat = to_categorical(y_test, 10)
 
-df = pd.DataFrame({'y_pred': y_pred,
-                   'Y_test1': Y_test1})
-print(df)
+    x_train = np.expand_dims(x_train, axis=-1)
+    x_test = np.expand_dims(x_test, axis=-1)
 
-print(f'accuracy: {accuracy_score(Y_test1, y_pred) :.3}')
+    model = Sequential([
+        Conv2D(32, (3, 3), padding='same', activation='relu', input_shape=(28, 28, 1)),
+        MaxPooling2D((2, 2), strides=2),
+        Conv2D(64, (3, 3), padding='same', activation='relu'),
+        MaxPooling2D((2, 2), strides=2),
+        Flatten(),
+        Dense(128, activation='relu'),
+        Dense(10, activation='softmax')
+    ])
 
-with open('instrument_pickle_file.pkl','wb') as pkl:
-    pickle.dump(model, pkl)
+    model.compile(optimizer='adam',
+                  loss='categorical_crossentropy',
+                  metrics=['accuracy'])
+
+    print("Обучение модели...")
+    history = model.fit(x_train, y_train_cat,
+                        batch_size=32,
+                        epochs=5,
+                        validation_split=0.2,
+                        verbose=1)
+
+    scores = model.evaluate(x_test, y_test_cat, verbose=0)
+    print(f"Точность на тестовых данных: {scores[1] * 100:.2f}%")
+
+    model.save('/content/mnist_model.h5')
+    print("Модель сохранена как 'mnist_model.h5'")
+
+    return model
+
+if __name__ == "__main__":
+    train_and_save_model()
